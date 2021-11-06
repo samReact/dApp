@@ -11,7 +11,10 @@
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.0.0",
     "react-scripts": "^4.0.3",
+    "react-tsparticles": "^1.37.3",
     "redux": "^4.1.2",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.4.0",
     "web3": "^1.6.0"
   },
   "scripts": {
