@@ -1,19 +1,21 @@
-import { Form, Button } from 'react-bootstrap'
+import { Button, InputGroup, FormControl } from 'react-bootstrap'
 
 function NewZombieForm({ handleSubmit, handleChange }) {
   return (
-    <Form onChange={handleChange}>
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Label>Enter Zombie's name</Form.Label>
-        <Form.Control type="text" placeholder="Enter name" />
-        <Form.Text className="text-muted">
-          We'll never share your email with anyone else.
-        </Form.Text>
-      </Form.Group>
-      <Button variant="primary" type="button" onClick={handleSubmit}>
+    <InputGroup size="sm" className="mb-3" onChange={handleChange}>
+      <FormControl
+        placeholder="Enter Zombie's name"
+        aria-label=""
+        aria-describedby="basic-addon2"
+      />
+      <Button
+        variant="outline-secondary"
+        id="button-addon2"
+        onClick={handleSubmit}
+      >
         Submit
       </Button>
-    </Form>
+    </InputGroup>
   )
 }
 

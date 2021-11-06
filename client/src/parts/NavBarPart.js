@@ -5,7 +5,7 @@ import logo from '../etherum.png'
 const NavbarPart = () => {
   const navigate = useNavigate()
   return (
-    <Navbar bg="light" variant="light">
+    <Navbar bg="light" variant="light" style={{ zIndex: 10 }}>
       <Container>
         <Navbar.Brand onClick={() => navigate('./')}>
           <img

@@ -8,15 +8,15 @@ import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import { devToolsEnhancer } from 'redux-devtools-extension'
-
-const store = createStore(() => 'hello world !', devToolsEnhancer())
+import { store } from './store/configStore'
+// import { PersistGate } from 'redux-persist/integration/react'
 
 ReactDOM.render(
   <BrowserRouter>
     <Provider store={store}>
+      {/* <PersistGate loading={null} persistor={persistor}> */}
       <App />
+      {/* </PersistGate> */}
     </Provider>
   </BrowserRouter>,
   document.getElementById('root'),

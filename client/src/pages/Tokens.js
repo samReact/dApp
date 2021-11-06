@@ -1,92 +1,90 @@
-import { useEffect, useState } from 'react'
-import { Card, Button, Badge } from 'react-bootstrap'
+import { useEffect, useRef, useState } from 'react'
+import { Col, Row } from 'react-bootstrap'
+import { feedOnKitty } from '../utils/utils'
+
+import { useDispatch, useSelector } from 'react-redux'
 import {
-  feedOnKitty,
-  getZombieDetails,
-  levelUp,
+  createRandomZombie,
+  levelUpZombie,
+  setOwnerArmy,
   setNewName,
-} from '../utils/utils'
-import zombieImg from '../CryptoZombies.jpeg'
+} from '../store/actions'
+import NewZombieForm from '../parts/NewZombieForm'
+import ZombieCard from '../parts/ZombieCard'
 
-const Tokens = ({ zombies, contract, accounts, web3 }) => {
-  const [army, setArmy] = useState([])
+const Tokens = () => {
+  const state = useSelector((state) => state)
+  const ownerArmy = useSelector((state) => state.ownerArmy)
+  const [name, setName] = useState('')
+  const { contract, currentAccount, zombies } = state
+  const dispatch = useDispatch()
+  const inputRef = useRef()
 
-  // useEffect(() => {
-  //   getDetails()
-  // }, [])
+  useEffect(() => {
+    if (zombies.length) dispatch(setOwnerArmy)
+  }, [zombies, dispatch])
 
-  // const getDetails = async () => {
-  //   let result = await getZombieDetails(zombies[0], contract)
-  //   let newArmy = []
-  //   newArmy.push(result)
-  //   setArmy(newArmy)
-  // }
+  async function handleSubmit(e) {
+    e.preventDefault()
+    try {
+      dispatch((dispatch, getState) =>
+        createRandomZombie(dispatch, getState, name),
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleChange = (e) => {
+    setName(e.target.value)
+  }
 
   const handleFeed = async () => {
-    let result = await feedOnKitty(zombies[0], 2, contract, accounts[0])
+    let result = await feedOnKitty(zombies[0], 2, contract, currentAccount)
     console.log(result)
   }
 
-  const handleLevel = async () => {
-    let result = await levelUp(zombies[0], contract, accounts[0], web3)
-    console.log(result)
+  const handleLevelUp = async (zombieId) => {
+    dispatch((dispatch, getState) =>
+      levelUpZombie(dispatch, getState, zombieId),
+    )
   }
 
-  const handleName = async () => {
-    let result = await setNewName(zombies[0], 'Francois', contract, accounts[0])
-    console.log(result)
+  const handleSubmitName = async (zombieId) => {
+    dispatch((dispatch, getState) =>
+      setNewName(dispatch, getState, zombieId, name),
+    )
+    inputRef.current.value = ''
   }
+
   return (
-    <>
-      <h2>Tokens</h2>
-      {zombies.map((zombie) => {
-        return (
-          <Card key={zombie.name} style={{ width: '18rem' }}>
-            <Card.Img
-              variant="top"
-              src={zombieImg}
-              style={{ width: '18rem' }}
+    <div className="mt-5">
+      {zombies && ownerArmy ? (
+        ownerArmy.map((zombie) => {
+          return (
+            <ZombieCard
+              key={zombie.dna}
+              zombie={zombie}
+              handleFeed={handleFeed}
+              handleLevel={handleLevelUp}
+              handleChange={handleChange}
+              handleSubmitName={handleSubmitName}
+              inputRef={inputRef}
             />
-            <Card.Body>
-              <Card.Title>{zombie.name}</Card.Title>
-              <div className="mb-3">
-                <Badge bg="info">Level {zombie.level}</Badge>
-              </div>
-              <div className="mb-3">
-                <Badge bg="info">DNA {zombie.dna}</Badge>
-              </div>
-
-              <div className="d-flex justify-content-between mb-3">
-                <Button
-                  size="sm"
-                  variant="primary"
-                  onClick={() => handleFeed()}
-                >
-                  Feed Me !
-                </Button>
-                <Button
-                  size="sm"
-                  variant="primary"
-                  onClick={() => handleLevel()}
-                >
-                  Level Up !
-                </Button>
-              </div>
-              <div>
-                <Button
-                  size="sm"
-                  variant="primary"
-                  onClick={() => handleName()}
-                  disabled={zombie.level < 2}
-                >
-                  Change Name
-                </Button>
-              </div>
-            </Card.Body>
-          </Card>
-        )
-      })}
-    </>
+          )
+        })
+      ) : (
+        <Col lg={6}>
+          <h6>You don't own any Zombie yet...Let's create one !</h6>
+          <Row>
+            <NewZombieForm
+              handleSubmit={handleSubmit}
+              handleChange={handleChange}
+            />
+          </Row>
+        </Col>
+      )}
+    </div>
   )
 }
 
